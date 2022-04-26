@@ -5,8 +5,9 @@
 * Organización de computadoras y Assembler
 * Ciclo 1 - 2022
 *
-* Promedio de 2 numeros obtenidos en un input
+* Promedio 2 numeros
  ----------------------------------------------- */
+
 @@ codigo de assembler: se coloca en la seccion .text
 	.text
 	.align		2
@@ -53,7 +54,7 @@ promedio:
     ldr r8,[r6]
     ldr r7,=op2
     ldr r7,[r7]
-    @ciclo de potencia
+    @ciclo de promedio
     mov r10,#0 /*contador*/
     cicloP:
     add r10,#1
@@ -70,7 +71,7 @@ promedio:
     b Menu
     @para ver resultado
 
-* si pone q sale*/
+/*si pone q sale*/
 Salir:
 ldr r0,=adios
 bl puts
@@ -100,3 +101,4 @@ comando:
     .byte 0
 adios:
     .asciz "Hasta pronto"
+    
