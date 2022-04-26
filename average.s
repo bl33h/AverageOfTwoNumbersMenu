@@ -5,15 +5,15 @@
 * Organización de computadoras y Assembler
 * Ciclo 1 - 2022
 *
-* Promedio 2 numeros
+* Programa que calcula el promedio y guia durante el proceso
  ----------------------------------------------- */
 
-@@ codigo de assembler: se coloca en la seccion .text
-	.text
-	.align		2
-	@@ etiqueta "main" llama a la funcion global
-	.global		main
-	.type		main, %function
+  @@ codigo de assembler: se coloca en la seccion .text
+.text
+.align 2
+    @@ etiqueta "main" llama a la funcion global
+.global main
+.type main, %function
 main:
     @@ grabar registro de enlace en la pila
 stmfd sp!, {lr}
@@ -32,15 +32,43 @@ comp:
 /*saltos dependiendo de caracter*/
     ldr r4,=comando
     ldrb r4,[r4]
-    cmp r4, #'/'
-    beq promedio
+    cmp r4, #'+'
+    beq suma
+    cmpne r4, #'/'
+    beq div
     cmpne r4, #'q'
     beq Salir
     bne ErrorCar
 
-/* si coloca /*/
-promedio:
-@ingreso op2
+    /* suma */
+    suma:
+    @ingreso op2
+    ldr r0,=ingreso_op
+    bl puts
+    ldr r0, =entrada
+    ldr r1,=op2
+    bl scanf
+    @validacion
+    cmp r0,#0
+    beq Error
+    @calculo
+    ldr r6, =op1
+    ldr r8,[r6]
+    ldr r7,=op2
+    ldr r7,[r7]
+    add r8,r7
+    @guarda valor
+    str r8,[r6]
+    ldr r0,=res
+    ldr r1,=op1
+    ldr r1,[r1]
+    bl printf
+    b Menu
+
+    /********************************/
+    /* division */
+    div:
+    @ingreso op2
     ldr r0,=ingreso_op
     bl puts
     ldr r0, =entrada
@@ -54,24 +82,46 @@ promedio:
     ldr r8,[r6]
     ldr r7,=op2
     ldr r7,[r7]
-    @ciclo de promedio
+    @ciclo de division
     mov r10,#0 /*contador*/
-    cicloP:
+    ciclo:
     add r10,#1
-    mul r8,r6
-    cmp r10,r7
-    bne cicloP
-    mov r8,r8
+    sub r8,r7
+    cmp r8,#0
+    bne ciclo
+    mov r8,r10
     @guarda valor y regresa
     str r8,[r6]
-    ldr r0,=res
+    ldr r0,=ress
     ldr r1,=op1
     ldr r1,[r1]
     bl printf
     b Menu
     @para ver resultado
 
-/*si pone q sale*/
+Res:
+/*carga, muestra y regresa*/
+ldr r0,=res
+ldr r1,=op1
+ldr r1,[r1]
+bl printf
+b Menu
+
+/*salto para error de num*/
+Error:
+ldr r0,=error
+bl puts
+bl getchar
+b comp
+
+/* salto para error de comando*/
+ErrorCar:
+ldr r0,=error
+bl puts
+bl getchar
+b Menu
+
+/* si pone q sale*/
 Salir:
 ldr r0,=adios
 bl puts
@@ -88,17 +138,20 @@ op2: .word 0
 error:
     .asciz "Ingreso incorrecto"
 ingreso:
-    .asciz "Ingrese un comando: "
+    .asciz "Ingrese un comando o signo de la operacion a realizar: "
 ingreso_op:
-    .asciz "Ingrese un valor: "
+    .asciz "Ingrese el valor: "
 menu:
-    .asciz "C A L C U L A T O R\n/. promedio de 2 numeros\nq. salir"
+    .asciz "------- PROMEDIO -------\nElija el comando de la suma e ingrese los 2 numeros de los que desea obtener el promedio\nPosteriormente seleccione la division y coloque el valor 2\nPresione ENTER entre cada dato\n+. suma\n/. div\nq. salir\n\n Puede realizar el mismo procedimiento con la cantidad de datos que usted prefiera, recuerde que el promedio es la sumatoria de los datos dividido la cantidad de estos.\n"
 entrada:
     .asciz " %d"
 opcion:
     .asciz " %c"
 comando:
     .byte 0
+res:
+    .asciz "El valor de la sumatoria es: %d\n"
+ress:
+    .asciz "El promedio es: %d\n"
 adios:
-    .asciz "Hasta pronto"
-    
+    .asciz "Gracias por utilizar el programa"
